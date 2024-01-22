@@ -23,42 +23,31 @@ public class UnitSelection : MonoBehaviour
 
     void Awake()
     {
-
-        // get components
-        //cam = Camera.main;
         player = GetComponent<Player>();
-
-
-
     }
 
 
 
     void Update()
     {
-
         ProcessPCTouch();
-
-
     }
-
-
-
 
     private void ProcessPCTouch()
     {
-
-
         // mouse down
-        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) //
+        if (Input.GetMouseButtonDown(0)) //&& !EventSystem.current.IsPointerOverGameObject()
         {
+            RemoveNullUnitsFromSelection();
+            
             ToggleSelectionVisual(false);
-            ToggleRangeVisual(false);
+           // ToggleRangeVisual(false);
          //   ToggleUnitPanel(false);
             selectedUnits = new List<PlayerUnit>();
-            ClearSelectedUnit();
+   
             TrySelect(Input.mousePosition);
-            startPos = Input.mousePosition;
+            startPos = Input.mousePosition;  
+
         }
 
         // mouse up
@@ -87,9 +76,9 @@ public class UnitSelection : MonoBehaviour
                         // close other UI's
 
                         //UnitCommander.MyInstance.ClosePlayerBasePanel();
-                        ClearSelectedUnit();
-                      //  UIManager.MyInstance.multipleUnitsSelectedImage.SetActive(false);
-                       // UnitCommander.MyInstance.CloseGateUI();
+                        selectedUnits = new List<PlayerUnit>();
+                        //  UIManager.MyInstance.multipleUnitsSelectedImage.SetActive(false);
+                        // UnitCommander.MyInstance.CloseGateUI();
 
 
                         //    selectedUnits.Add(hit.collider.GetComponent<PlayerUnit>());
@@ -121,86 +110,45 @@ public class UnitSelection : MonoBehaviour
         Ray ray = cam.ScreenPointToRay(screenPos);
         RaycastHit hit;
 
-
         if (Physics.Raycast(ray, out hit, 9000, unitLayerMask))
         {
             PlayerUnit playerUnit = hit.collider.GetComponent<PlayerUnit>();
 
-
             if (hit.collider != null)
             {
-                if (hit.collider.tag == "PlayerUnit" && !hit.collider.GetComponent<PlayerUnit>().isDead)
+                if (hit.collider.tag == "PlayerUnit" && !hit.collider.GetComponent<Unit>().isDead)
                 {
 
                     if (HasUnitSelected())
                     {
-                        ClearSelectedUnit();
+                        selectedUnits = new List<PlayerUnit>();
                     }
 
                     // assign selected unit
                     //  selectedUnits.Add(playerUnit);
                     AddUnitsToSelection(playerUnit);
                     playerUnit.ToggleSelectionMarker(true);
-                  //  UnitCommander.MyInstance.ClosePlayerBasePanel();
-                  //  UnitCommander.MyInstance.CloseGateUI();
-                  //  playerUnit.OpenCircleUI();
-                    // playerUnit.unitUICircle.gameObject.SetActive(true);
 
+                    if (playerUnit.unitType == UnitType.SquadLeader && playerUnit.isSquadLeader)
+                    {
+                        SquadGroup SquadGroup = hit.collider.gameObject.GetComponentInParent<SquadGroup>();
 
-                    //  hasUnitSelected = true;
-                    //    selectedUnit.unitUICircle.gameObject.SetActive(true);
-                    // selectedUnit.unitSelectionMarker.SetActive(true);
+                        // selectedUnits = new List<Unit>(SquadManager.squad1);
+                        selectedUnits = new List<PlayerUnit>();
+                        foreach (Unit unit in SquadGroup.unitsInSquad)
+                        {
+                            PlayerUnit playerUnitToAdd = unit.GetComponent<PlayerUnit>();
+                            selectedUnits.Add(playerUnitToAdd);
+                            unit.GetComponent<PlayerUnit>().ToggleSelectionMarker(true);
 
+                        
+                        }
+
+                    }
                 }
             }
-
-
         }
     }
-
-    public void AddUnitsToSelection(PlayerUnit playerUnit)
-    {
-
-        // ClearSelectedUnit();
-
-        selectedUnits.Add(playerUnit);
-
-        if (selectedUnits.Count == 1)
-        {
-           // UIManager.MyInstance.multipleUnitsSelectedImage.SetActive(false);
-            //  playerUnit.unitUICircle.gameObject.SetActive(true);
-          //  playerUnit.OpenCircleUI();
-           // playerUnit.unitRangeMarker.gameObject.SetActive(true);
-        }
-        else if (selectedUnits.Count == 0)
-        {
-            ClearSelectedUnit();
-        }
-        else if (selectedUnits.Count > 1)
-        {
-          //  UIManager.MyInstance.multipleUnitsSelectedImage.SetActive(true);
-            ClearSelectedUnit();
-        }
-    }
-
-
-    public void ClearSelectedUnit()
-    {
-
-        foreach (PlayerUnit unit in selectedUnits)
-        {
-            // unit.unitUICircle.gameObject.SetActive(false);
-       //     unit.CloseCircleUI();
-        //    unit.unitRangeMarker.gameObject.SetActive(false);
-        }
-        //  ClearSelection();
-    }
-
-    public void ClearSelection()
-    {
-        selectedUnits = new List<PlayerUnit>();
-    }
-
 
 
     // called when we are creating a selection box
@@ -218,16 +166,10 @@ public class UnitSelection : MonoBehaviour
         // the Mathf.abs makes a negative number into a positive number
         selectionBox.sizeDelta = new Vector2(Mathf.Abs(width), Mathf.Abs(height));
         selectionBox.anchoredPosition = startPos + new Vector2(width / 2, height / 2);
-
-
-
-
-
     }
 
     void ReleaseSelectionBox()
     {
-
         selectionBox.gameObject.SetActive(false);
 
         Vector2 min = selectionBox.anchoredPosition - (selectionBox.sizeDelta / 2);
@@ -248,6 +190,14 @@ public class UnitSelection : MonoBehaviour
 
     }
 
+    public void AddUnitsToSelection(PlayerUnit playerUnit)
+    {
+     //   selectedUnits = new List<PlayerUnit>();
+        selectedUnits.Add(playerUnit);
+       // hasUnitSelected = true;
+    }
+
+
 
     // if unit has died then remove from selection list
     public void RemoveNullUnitsFromSelection()
@@ -259,6 +209,10 @@ public class UnitSelection : MonoBehaviour
         }
     }
 
+    public void ClearSelectedUnit()
+    {
+        selectedUnits = new List<PlayerUnit>();
+    }
 
 
 
@@ -266,7 +220,11 @@ public class UnitSelection : MonoBehaviour
     {
         foreach (PlayerUnit playerUnit in selectedUnits)
         {
-            playerUnit.ToggleSelectionMarker(selected);
+            if (playerUnit != null)
+            {
+                playerUnit.ToggleSelectionMarker(selected);
+            }
+         
         }
     }
 

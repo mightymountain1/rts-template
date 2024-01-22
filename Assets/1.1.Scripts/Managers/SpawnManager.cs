@@ -7,20 +7,23 @@ using static UnityEditor.PlayerSettings;
 public class SpawnManager : MonoBehaviour
 {
 
-    //public float waveCountdown;
-    //public float timeBetweenWaves;
+    private static SpawnManager instance;
 
-    //public GameObject spawnStartFX;
-    //public GameObject enemy;
-
-    //public Camera mainCamera;
-
-    //public int numberOfEnmies;
-
-    //public float spawnRange;
+    public static SpawnManager MyInstance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType<SpawnManager>();
+            }
+            return instance;
+        }
+    }
 
     [Header("Player Settings")]
     public GameObject playerUnitPrefab;
+    public GameObject playerSquadLeaderPrefab;
     public GameObject playerUnitSpawnPos;
     public List<Unit> playerUnits = new List<Unit>();
     public int playerUnitStartingCount;
@@ -40,6 +43,19 @@ public class SpawnManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+        StartGame();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+      //  CountDownUpdate();
+    }
+
+    // start Game
+    public void StartGame()
+    {
         for (int i = 0; i < playerUnitStartingCount; i++)
         {
             CreatePlayerUnit();
@@ -52,14 +68,8 @@ public class SpawnManager : MonoBehaviour
 
         // enemy spawn
         InvokeRepeating("TrySpawnUnit", 0.0f, checkRateToSpawnUnit);
-
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-      //  CountDownUpdate();
-    }
 
     // Spawn Player unit
 
@@ -77,6 +87,7 @@ public class SpawnManager : MonoBehaviour
 
       
         Unit unit = unitObj.GetComponent<Unit>();
+        unit.SetUnitType(UnitType.Regular);
 
         // add to the list of player Units
         playerUnits.Add(unit);
@@ -97,6 +108,46 @@ public class SpawnManager : MonoBehaviour
         // UIManager.MyInstance.UpdateUnitCountText();
 
     }
+
+    // Player Squad Leader
+    public void CreatePlayerSquadLeader()
+    {
+        Vector3 point;
+
+        if (CurrencyManager.MyInstance.playerGold - 1 < GameManager.MyInstance.playerUnitCost)
+        {
+            // add sound fx for failed click
+            return;
+        }
+
+        GameObject unitObj = Instantiate(playerSquadLeaderPrefab, playerUnitSpawnPos.transform.position, Quaternion.identity, playerUnitParent);
+
+
+        Unit unit = unitObj.GetComponent<Unit>();
+
+        unit.SetUnitType(UnitType.SquadLeader);
+
+
+        // add to the list of player Units
+        playerUnits.Add(unit);
+        GameManager.MyInstance.playerUnits.Add(unit);
+
+        CurrencyManager.MyInstance.DeductGoldPlayer(GameManager.MyInstance.playerUnitCost);
+
+
+        // Find a random spot that doesnt overlap another agent
+        if (RandomPoint(playerUnitSpawnPos.transform.position, spawnRange, out point))
+        {
+            NavMeshAgent nav = unit.GetComponent<NavMeshAgent>();
+            nav.Warp(point);
+        }
+
+
+        // To do - add UI unit count
+        // UIManager.MyInstance.UpdateUnitCountText();
+
+    }
+
 
 
     bool RandomPoint(Vector3 center, float range, out Vector3 result)
@@ -126,6 +177,8 @@ public class SpawnManager : MonoBehaviour
             CreateEnemyUnit();
     }
 
+    public SquadLeader squadLeader;
+    public static List<EnemyUnit> selectedSquad = new List<EnemyUnit>();
 
     public void CreateEnemyUnit()
     {
@@ -141,6 +194,21 @@ public class SpawnManager : MonoBehaviour
         // To do - add UI unit count
         // UIManager.MyInstance.UpdateUnitCountText();
 
+
+        //// Squad stuff
+        //if (EnemyAI.MyInstance.squadNeedsFilling)
+        //{
+        //    if (squadLeader == null)
+        //    {
+        //        unit.GetComponent<SquadLeader>().enabled = true;
+        //        EnemyAI.MyInstance.squadLeader = unit.GetComponent<SquadLeader>();
+        //    } else
+        //    {
+
+        //    }
+        //}
+
+
         // Find a random spot that doesnt overlap another agent
         if (RandomPoint(enemyUnitSpawnPos.transform.position, spawnRange, out point))
         {
@@ -150,6 +218,62 @@ public class SpawnManager : MonoBehaviour
 
 
     }
+
+    //// Create Squad Leader
+    //public void CreateEnemySquadLeader()
+    //{
+    //    Vector3 point;
+
+    //    GameObject unitObj = Instantiate(enemyUnitPrefab, enemyUnitSpawnPos.transform.position, Quaternion.identity, enemyUnitParent);
+
+    //    // add to the list of player Units
+    //    Unit unit = unitObj.GetComponent<Unit>();
+    //    enemyUnits.Add(unit);
+    //    GameManager.MyInstance.enemyUnits.Add(unit);
+    //    CurrencyManager.MyInstance.DeductGoldPlayer(GameManager.MyInstance.enemyUnitCost);
+    //    // To do - add UI unit count
+    //    // UIManager.MyInstance.UpdateUnitCountText();
+
+
+    //    // Squad stuff
+    //    if (EnemyAI.MyInstance.squadNeedsFilling)
+    //    {
+    //        if (squadLeader == null)
+    //        {
+    //            unit.GetComponent<SquadLeader>().enabled = true;
+    //            EnemyAI.MyInstance.squadLeader = unit.GetComponent<SquadLeader>();
+    //        }
+    //        else
+    //        {
+
+    //        }
+    //    }
+
+
+    //    // Find a random spot that doesnt overlap another agent
+    //    if (RandomPoint(enemyUnitSpawnPos.transform.position, spawnRange, out point))
+    //    {
+    //        NavMeshAgent nav = unit.GetComponent<NavMeshAgent>();
+    //        nav.Warp(point);
+    //    }
+
+
+    //}
+
+    // Delete all units in game (restart game)
+    public void DeleteAllUnits()
+    {
+        foreach (Transform child in playerUnitParent)
+        {
+            Destroy(child.gameObject);
+        }
+
+        foreach (Transform child in enemyUnitParent)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+ 
 
 
 

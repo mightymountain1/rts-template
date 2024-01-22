@@ -286,13 +286,17 @@ public class PlayerUnitAI : MonoBehaviour
     void MoveToEnemyUpdateOrder()
     {
         
-        navAgent.SetDestination(curTarget.transform.position);
+     
       
         if (curTarget == null)
         {
             SetState(PlayerUnitState.Idle);
             return;
+        } else
+        {
+            navAgent.SetDestination(curTarget.transform.position);
         }
+          
 
 
         if (Time.time - lastpathUpdateTime > pathUpdateRate)

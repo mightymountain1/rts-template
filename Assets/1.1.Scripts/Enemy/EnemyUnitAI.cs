@@ -16,6 +16,7 @@ public enum EnemyUnitState
 
 }
 
+
 public class EnemyUnitAI : MonoBehaviour
 {
     // events
@@ -277,12 +278,15 @@ public class EnemyUnitAI : MonoBehaviour
 
     void MoveToEnemyUpdate()
     {
-        navAgent.SetDestination(curTarget.transform.position);
+     
        
         if (curTarget == null)
         {
             SetState(EnemyUnitState.MoveToBase);
             return;
+        } else
+        {
+            navAgent.SetDestination(curTarget.transform.position);
         }
 
         if (Time.time - lastpathUpdateTime > pathUpdateRate)

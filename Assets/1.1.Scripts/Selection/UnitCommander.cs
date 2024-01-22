@@ -19,19 +19,23 @@ public class UnitCommander : MonoBehaviour
         }
     }
 
-
     public LayerMask unitLayerMask;
 
     public bool hasUnitSelected = false;
     public LayerMask layerMask;
     public PlayerUnit selectedUnit;
 
+
     public GameObject selectionMarkerPrefab;
     public GameObject enemyMarker;
     public Camera cam;
     private UnitSelection unitSelection;
 
+    // squad stuff
+    public static List<Unit> selectedSquad = new List<Unit>();
+    public Transform squadParent;
 
+    // References
     UnitMover unitMover;
     private void Awake()
     {
@@ -48,115 +52,55 @@ public class UnitCommander : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ProcessMobileTouch();
         ProcessPCTouch();
-
-
-
     }
 
-    private void ProcessMobileTouch()
-    {
-        //foreach (Touch touch in Input.touches)
-        //{
-        //    if (touch.phase == TouchPhase.Began)
-        //    {
-        //        // Construct a ray from the current touch coordinates
-        //        Ray ray = Camera.main.ScreenPointToRay(touch.position);
-        //        if (Physics.Raycast(ray))
-        //        {
-        //            // Create a particle if hit
-        //          //  Instantiate(particle, transform.position, transform.rotation);
-        //        }
-        //    }
-        //}
-
-
-        if (Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began)
-        {
-            Ray ray = cam.ScreenPointToRay(Input.touches[0].position);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
-            {
-                if (hit.collider != null)
-                {
-                    // Color newColor = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1.0f);
-                    // hit.collider.GetComponent<MeshRenderer>().material.color = newColor;
-                }
-            }
-        }
-
-
-    }
 
     private void ProcessPCTouch()
     {
-
-
         if (Input.GetMouseButtonDown(0)) //   && !EventSystem.current.IsPointerOverGameObject()
         {
+            ClearSquad();
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit)) //, unitLayerMask
+            {
+                if (hit.collider != null)
+                {
+                    if (hit.collider.tag == "PlayerUnit" && !hit.collider.GetComponent<PlayerUnit>().isDead)
+                    {
+                        if (selectedUnit)
+                        {
+                            // clear selected units if have one
+                            selectedUnit.ToggleSelectionMarker(false);
+                            //selectedUnit.unitSelectionMarker.SetActive(false);
+                            selectedUnit = null;
+                            hasUnitSelected = false;
 
-            //Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            //RaycastHit hit;
-            //if (Physics.Raycast(ray, out hit)) //, unitLayerMask
-            //{
-
-
-            //    if (hit.collider != null)
-            //    {
-
-
-            //        if (hit.collider.tag == "PlayerUnit" && !hit.collider.GetComponent<PlayerUnit>().isDead)
-            //        {
-
-            //            if (selectedUnit)
-            //            {
-            //                // clear selected units if have one
-
-            //          //      selectedUnit.unitUIPanel.gameObject.SetActive(false);
-            //                selectedUnit.unitSelectionMarker.SetActive(false);
-            //                selectedUnit = null;
-            //                //      UIManager.MyInstance.selectedunitName.text = null;
-            //                hasUnitSelected = false;
-
-            //            }
-            //            // assign selected unit
-            //            selectedUnit = hit.collider.GetComponent<PlayerUnit>();
-            //            hasUnitSelected = true;
-            //        //    selectedUnit.unitUIPanel.gameObject.SetActive(true);
-            //            selectedUnit.unitSelectionMarker.SetActive(true);
-
-            //            //  selectedUnit.unitUIPanel.alpha = 1;
-
-            //            //  UIManager.MyInstance.UpdateUnitProfile(selectedUnit);
-            //            // UIManager.MyInstance.selectedunitName.text = selectedUnit.gameObject.name.ToString();
+                        }
+                        // assign selected unit
+                        selectedUnit = hit.collider.GetComponent<PlayerUnit>();
+                        hasUnitSelected = true;
+                        selectedUnit.ToggleSelectionMarker(true);
+                       // selectedUnit.unitSelectionMarker.SetActive(true);
+                    }
+                }
 
 
+                if (hit.collider.tag == "Ground")
+                {
+                    ClearSquad();
 
+                    if (hasUnitSelected)
+                    {
+                        //selectedUnit.unitSelectionMarker.SetActive(false);
+                        selectedUnit.ToggleSelectionMarker(false);
+                        selectedUnit = null;
+                        hasUnitSelected = false;
+                    }
 
-            //        }
-            //    }
-
-
-            //    if (hit.collider.tag == "Ground")
-            //    {
-            //        if (hasUnitSelected)
-            //        {
-            //            // selectedUnit.unitUIPanel.alpha = 0;
-            //      //      selectedUnit.unitUIPanel.gameObject.SetActive(false);
-            //            selectedUnit.unitSelectionMarker.SetActive(false);
-            //            selectedUnit = null;
-            //           // UIManager.MyInstance.selectedunitName.text = null;
-            //            hasUnitSelected = false;
-            //        }
-            //    }
-
-
-
-
-
-
-            //}
+                }
+            }
         }
 
         if (Input.GetMouseButtonDown(1) && unitSelection.HasUnitSelected())
@@ -170,76 +114,216 @@ public class UnitCommander : MonoBehaviour
             // cache the selected units into an array
             Unit[] selectedUnits = unitSelection.GetSelectedUnits();
 
-
-
             if (Physics.Raycast(ray, out hit))
 
             {
                 if (hit.collider.CompareTag("Ground") || hit.collider.CompareTag("PowerUp"))
                 {
                     UnitMoveToPosition(hit.point, selectedUnits);
-                    //    Debug.Log("Mouse pos is " + hit.point);
-                    //selectedUnit.GetComponent<PlayerUnitAI>().MoveToPosition(hit.point);
                     CreateSelectionMarker(hit.point, false, false);
-
-
+             
+                        foreach (Unit unit in selectedUnits)
+                        {
+                            if (unit.isInSquad)
+                            {
+                                // make the units leave squad if selected units doesnt include the squad leader
+                                if (!CheckIfASquadLeaderIsInSelection(selectedUnits))
+                                {
+                                    Debug.Log("unit left its squad");
+                                    LeaveCurrentSquad(unit.GetComponent<PlayerUnit>());
+                                }
+                            }
+                        }
                 }
 
-                if (hit.collider.CompareTag("Mine"))
+                //if (hit.collider.CompareTag("Mine"))
+                //{
+                //    Debug.Log("Move to Gold Mine and the collider is " + hit.collider.gameObject.transform.position);
+                //    UnitsGoToResource(hit.collider.gameObject, selectedUnits);
+                //    //  CreateSelectionMarker(hit.collider.transform.position, true);
+
+                //    //      UnitMoveToPosition(hit.point, selectedUnits);
+
+                //    //selectedUnit.GetComponent<PlayerUnitAI>().MoveToPosition(hit.point);
+                //    CreateSelectionMarker(hit.point, false, false);
+
+
+                //}
+                if (hit.collider.CompareTag("EnemyUnit"))
                 {
-                    Debug.Log("Move to Gold Mine and the collider is " + hit.collider.gameObject.transform.position);
-                    UnitsGoToResource(hit.collider.gameObject, selectedUnits);
-                    //  CreateSelectionMarker(hit.collider.transform.position, true);
-
-                    //      UnitMoveToPosition(hit.point, selectedUnits);
-
-                    //selectedUnit.GetComponent<PlayerUnitAI>().MoveToPosition(hit.point);
-                    CreateSelectionMarker(hit.point, false, false);
-
-
-                }
-                if (hit.collider.CompareTag("Enemy"))
-                {
-                    // create selection marker on targeted enemy
+                    // send the selected unit to the enemry target
                     EnemyUnit enemy = hit.collider.gameObject.GetComponent<EnemyUnit>();
-                    CreateSelectionMarkerEnemy(enemy);
+                    CreateSelectionMarkerEnemy(enemy);    
                     UnitsAttackEnemy(enemy, selectedUnits);
 
-                    //// send the selected unit to the enemry target
-                    //selectedUnit.GetComponent<PlayerUnitAI>().SetState(PlayerUnitState.MoveToEnemyOrder);
-                    //selectedUnit.GetComponent<PlayerUnitAI>().curTarget = enemy;
-
                 }
-                if (hit.collider.CompareTag("PowerUp"))
+                //if (hit.collider.CompareTag("PowerUp"))
+                //{
+                //    // create selection marker on targeted enemy
+                //    GameObject powerUp = hit.collider.gameObject;
+                //    //  PowerUpScript powerUp = hit.collider.gameObject.GetComponent<EnemyUnit>();
+
+                //    CreateSelectionMarker(powerUp.transform.position, false, false);
+
+                //    selectedUnit.GetComponent<PlayerUnitAI>().MoveToPosition(powerUp.transform.position);
+
+
+                //}
+                // If right click on a squad Leader
+                if (hit.collider.GetComponent<SquadLeader>())
                 {
-                    // create selection marker on targeted enemy
-                    GameObject powerUp = hit.collider.gameObject;
-                    //  PowerUpScript powerUp = hit.collider.gameObject.GetComponent<EnemyUnit>();
+                    Unit leader = hit.collider.gameObject.GetComponent<Unit>();
+                     //SquadGroup squadGroup = hit.collider.gameObject.GetComponentInChildren<SquadGroup>();
 
-                    CreateSelectionMarker(powerUp.transform.position, false, false);
-
-                    selectedUnit.GetComponent<PlayerUnitAI>().MoveToPosition(powerUp.transform.position);
-
+                    foreach (Unit unit in selectedUnits)
+                    {
+                        if (unit.isInSquad && !unit.isSquadLeader)
+                        {
+                            LeaveCurrentSquad(unit.GetComponent<PlayerUnit>());
+                        }
+                    }
+                    if (leader.isSquadLeader && leader.isInSquad)
+                    {
+                        // add units to the existing squad
+                        unitSelection.RemoveNullUnitsFromSelection();
+                        AddToExistingSquad(selectedUnits, leader.squadGroup);
+                        leader.GetComponent<PlayerUnit>().UpdateSlectionMarkerStatus();
+                    } else
+                    {
+                        unitSelection.RemoveNullUnitsFromSelection();
+                        CreateSquadron(selectedUnits, leader);
+                    }
 
                 }
+            }
+        }
+
+        // did we press down our right mouse button and do we have a squad selected selected?
+        if (Input.GetMouseButtonDown(1) && HasSquadSelected())
+        {
+            // shoot a raycast from our mouse to see what we hit
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit, 900, layerMask))
+            {
+                // are we click on the ground?
+                if (hit.collider.CompareTag("Ground"))
+                {
+                    UnitMoveToPosition(hit.point, GetSelectedSquadUnits());
+                  //  CreateSelectionMarker(hit.point, false);  // to do
+                }
+            }
+        }
+    }
 
 
+    // add to existing squad
+    public void AddToExistingSquad(Unit[] units, SquadGroup squadGroup)
+    {
+        for (int x = 0; x < units.Length; x++)
+        {
+            units[x].gameObject.transform.parent = squadGroup.transform;
+            selectedSquad.Add(units[x]);
+            squadGroup.UnitAddToSquad(units[x]);
+            units[x].GetComponent<PlayerUnit>().UpdateSlectionMarkerStatus();
+        }
+    }
 
+    public void LeaveCurrentSquad(PlayerUnit playerUnit)
+    {
+            playerUnit.squadGroup.UnitLeaveSquad(playerUnit);
+            playerUnit.gameObject.transform.SetParent(SpawnManager.MyInstance.playerUnitParent);
+            selectedSquad.Remove(playerUnit);
+            playerUnit.UpdateSlectionMarkerStatus(); // update selection marker after leaving squad
+    }
+
+    public void DisbandSquad(SquadGroup squadGroup)
+    {
+        foreach (Unit unit in squadGroup.unitsInSquad)
+        {  
+            selectedSquad.Remove(unit);
+            unit.gameObject.transform.SetParent(SpawnManager.MyInstance.playerUnitParent);
+            unit.isInSquad = false;
+            unit.GetComponent<PlayerUnit>().UpdateSlectionMarkerStatus();
+        }
+        Destroy(squadGroup.gameObject);
+    }
+
+    public void RemoveFromSquadList(Unit unit)
+    {
+        selectedSquad.Remove(unit);
+    }
+
+
+    // is there a squad Leader in this selection of unit
+    public bool CheckIfASquadLeaderIsInSelection(Unit[] selectedUnits)
+    {
+        foreach (Unit unit in selectedUnits)
+        {
+            if (unit.isSquadLeader)
+            {
+                return true;
             }
 
         }
-
+        return false;
     }
 
     public void ClearSelectedUnit()
     {
         unitSelection.ClearSelectedUnit();
-        //   selectedUnit.unitUICircle.gameObject.SetActive(false);
-        //   selectedUnit.CloseTalentTree();
         selectedUnit.unitSelectionMarker.SetActive(false);
         selectedUnit = null;
         hasUnitSelected = false;
-        //   UIManager.MyInstance.ClearCirclePanel();
+    }
+
+
+    // create Squadron
+    void CreateSquadron(Unit[] units, Unit leader)
+    {
+        SquadGroup oldSquadToDelete = leader.squadGroup;
+        GameObject newSquadGO = new GameObject();
+        newSquadGO.name = "Squad";
+        SquadGroup newSquadGroup = newSquadGO.AddComponent<SquadGroup>();
+        Transform newSquadTransform = newSquadGO.transform;
+        newSquadTransform.SetParent(squadParent);
+
+        for (int x = 0; x < units.Length; x++)
+        {
+            units[x].gameObject.transform.parent = newSquadTransform;
+            selectedSquad.Add(units[x]);
+            units[x].isInSquad = true;
+            units[x].GetComponent<PlayerUnit>().UpdateSlectionMarkerStatus();
+        }
+      
+        leader.gameObject.transform.parent = newSquadTransform;   // add the leader to the new squad Transform
+        selectedSquad.Add(leader);
+        leader.isInSquad = true;
+        leader.GetComponent<PlayerUnit>().UpdateSlectionMarkerStatus();
+        newSquadGroup.CreateSquad(units, leader);
+
+      //  Destroy(oldSquadToDelete.gameObject);
+
+
+
+    }
+
+
+    public Unit[] GetSelectedSquadUnits()
+    {
+        return selectedSquad.ToArray();
+    }
+
+    public bool HasSquadSelected()
+    {
+        return selectedSquad.Count > 0 ? true : false;
+    }
+
+    public void ClearSquad()
+    {
+
+        selectedSquad = new List<Unit>();
     }
 
     public void ClosePlayerBasePanel()

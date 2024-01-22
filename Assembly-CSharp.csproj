@@ -68,9 +68,11 @@
     <Compile Include="Assets\1.1.Scripts\Character\Player.cs" />
     <Compile Include="Assets\1.1.Scripts\Character\Health.cs" />
     <Compile Include="Assets\1.1.Scripts\CC\PlayerMovement.cs" />
+    <Compile Include="Assets\1.1.Scripts\Selection\SquadLeader.cs" />
     <Compile Include="Assets\1.1.Scripts\Enemy\Movement.cs" />
     <Compile Include="Assets\1.1.Scripts\UI\Billboard.cs" />
     <Compile Include="Assets\1.1.Scripts\Audio\MusicPlayer.cs" />
+    <Compile Include="Assets\1.1.Scripts\Selection\SquadGroup.cs" />
     <Compile Include="Assets\1.1.Scripts\Audio\Track.cs" />
     <Compile Include="Assets\1.1.Scripts\Managers\SpawnManager.cs" />
     <Compile Include="Assets\1.1.Scripts\Enemy\EnemyAI.cs" />

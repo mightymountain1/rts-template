@@ -28,7 +28,7 @@ public class ResourceHub : MonoBehaviour
     public float captureRange = 100;
 
     public int timeBetweenSends;
-    private int sendAmount = 10;
+    public int sendAmount = 10;
 
     public float captureTick = 0;
 
@@ -84,18 +84,27 @@ public class ResourceHub : MonoBehaviour
             case BuildingOwnership.Player:
                 {
                     PlayerInControlUpdate();
-                    redFlag.SetActive(false);
-                    blueFlag.SetActive(true);
+                 //   redFlag.SetActive(false);
+                //    blueFlag.SetActive(true);
                     break;
                 }
 
             case BuildingOwnership.Enemy:
                 {
-                    redFlag.SetActive(true);
-                    blueFlag.SetActive(false);
+                  //  redFlag.SetActive(true);
+                 //   blueFlag.SetActive(false);
                     break;
                 }
 
+        }
+
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            CapturedByPlayer();
+        }
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            CapturedByEnemy();
         }
     }
     void PlayerInControlUpdate()
@@ -116,9 +125,9 @@ public class ResourceHub : MonoBehaviour
         ownershipState = BuildingOwnership.Player;
         captureTick = 0;
         Debug.Log("Captured by player");
-        changeFlagFX.Play();
-        blueFlag.gameObject.SetActive(true);
-        redFlag.gameObject.SetActive(false);
+    //    changeFlagFX.Play();
+      //  blueFlag.gameObject.SetActive(true);
+      //  redFlag.gameObject.SetActive(false);
 
         StartCoroutine(SendCart());
     }
@@ -131,6 +140,11 @@ public class ResourceHub : MonoBehaviour
         //  redFlag.gameObject.SetActive(true);
 
         Debug.Log("Captured by Enemy");
+    }
+
+    public void SetOwnershipToNeutral()
+    {
+        ownershipState = BuildingOwnership.Neutral;
     }
 
     public void BeingCapturedTick()

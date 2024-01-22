@@ -38,7 +38,7 @@ public class PlayerBase : Base
 
         if (health.MyCurrentValue <= 0)
         {
-
+            GameManager.MyInstance.EndGame(false); // lose game
         }
     }
 }

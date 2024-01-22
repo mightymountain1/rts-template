@@ -32,10 +32,19 @@ public class CurrencyManager : MonoBehaviour
     [Header("Player Currency")]
     public int playerGold;
     public TextMeshProUGUI playerMyGoldText;
+    public int playerFood;
+    public TextMeshProUGUI playerMyFoodText;
 
     [Header("Enemy Currency")]
     public int enemyGold;
     public TextMeshProUGUI enemyMyGoldText;
+    public int enemyFood;
+    public TextMeshProUGUI enemyMyFoodText;
+
+    [Header("Resources")]
+   // public List<ResourceHub>resourceHubsInGame = new List<ResourceHub>();
+    public ResourceHub[] resourceHubsInGame;
+        
 
     // To do
     // - points
@@ -44,9 +53,9 @@ public class CurrencyManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        playerGold = GameManager.MyInstance.playerStartingGold;
-        enemyGold = GameManager.MyInstance.enemyStartingGold;
-        UpdateTextResources();
+        ResetCurrencies(); // set all currencies at the starting levels
+        resourceHubsInGame = FindObjectsOfType<ResourceHub>(); // find all the resource hubs in game and store in an array.
+
     }
 
     // Update is called once per frame
@@ -62,7 +71,7 @@ public class CurrencyManager : MonoBehaviour
             switch (resourceType)
             {
                 case ResourceType.Food:
-
+                    GainFoodPlayer(quantity);
                     break;
                 case ResourceType.Gold:
                     GainGoldPlayer(quantity);
@@ -77,7 +86,7 @@ public class CurrencyManager : MonoBehaviour
             switch (resourceType)
             {
                 case ResourceType.Food:
-
+                    GainFoodEnemy(quantity);
                     break;
                 case ResourceType.Gold:
                     GainGoldEnemy(quantity);
@@ -105,24 +114,75 @@ public class CurrencyManager : MonoBehaviour
         UpdateTextResources();
     }
 
+    public void GainFoodPlayer(int foodAmount)
+    {
+        playerFood += foodAmount;
+        UpdateTextResources();
+
+    }
+
+    public void DeductfoodPlayer(int foodAmount)
+    {
+        playerGold -= foodAmount;
+        UpdateTextResources();
+    }
+
 
     // Enemy --------------------------------
+
+    // enemy gain gold
     public void GainGoldEnemy(int goldCoin)
     {
         enemyGold += goldCoin;
         //UpdateTextResources();
 
     }
-
+    // enemy deduct gold
     public void DeductGoldEnemy(int goldCoin)
     {
         enemyGold -= goldCoin;
        // UpdateTextResources();
     }
+
+    // Enemy Gain food
+    public void GainFoodEnemy(int foodAmount)
+    {
+        enemyFood += foodAmount;
+        //UpdateTextResources();
+
+    }
+
+    // Enemy Deduct food
+    public void DeductfoodEnemy(int foodAmount)
+    {
+        enemyFood -= foodAmount;
+        // UpdateTextResources();
+    }
+
     // update UI
     public void UpdateTextResources()
     {
         playerMyGoldText.text = playerGold.ToString();
         // to do points
+    }
+
+    // reset currencies
+    public void ResetCurrencies()
+    {
+        playerGold = GameManager.MyInstance.playerStartingGold;
+        enemyGold = GameManager.MyInstance.enemyStartingGold;
+        playerFood = GameManager.MyInstance.playerStartingFood;
+        enemyFood = GameManager.MyInstance.enemyStartingFood;
+
+        UpdateTextResources();
+    }
+
+    // Reset ResourceHubs
+    public void ResetResourceHubs()
+    {
+        foreach (ResourceHub resourceHub in resourceHubsInGame)
+        {
+            resourceHub.SetOwnershipToNeutral();
+        }
     }
 }

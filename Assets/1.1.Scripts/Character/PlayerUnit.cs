@@ -5,16 +5,13 @@ using UnityEngine.UI;
 
 public class PlayerUnit : Unit
 {
-
-
     // UI
     public GameObject unitSelectionMarker;
-
-
+    public GameObject unitSelectionMarkerGreen;
+    public GameObject unitSelectionMarkerWhite;
 
     // Refs
     PlayerUnitAI playerUnitAI;
-
 
     // HealthBar
     [SerializeField]
@@ -22,7 +19,6 @@ public class PlayerUnit : Unit
 
     [SerializeField]
     protected Stat healthUIPanel;
-
 
 
     public Stat MyXP
@@ -48,10 +44,6 @@ public class PlayerUnit : Unit
 
 
     // public GameObject berserkerFXFeet;
-
-
-
-
 
 
     // buff stuff
@@ -102,15 +94,27 @@ public class PlayerUnit : Unit
         if (unitSelectionMarker != null)
             unitSelectionMarker.SetActive(selected);
 
-        //if (UnitSelection.selectedUnits.Count == 1)
-        //{
-        //    unitRangeMarker.SetActive(true);
-        //}
-        //else
-        //{
-        //    unitRangeMarker.SetActive(false);
-        //}
+        UpdateSlectionMarkerStatus();
     }
+
+    public void UpdateSlectionMarkerStatus()
+    {
+        if (this != null)
+        {
+            if (isInSquad)
+            {
+                unitSelectionMarkerGreen.SetActive(true);
+                unitSelectionMarkerWhite.SetActive(false);
+            }
+            else
+            {
+                unitSelectionMarkerGreen.SetActive(false);
+                unitSelectionMarkerWhite.SetActive(true);
+            }
+        }
+       
+    }
+
 
     // Take Damage simple
     public override void TakeDamage(float damage)
@@ -121,18 +125,31 @@ public class PlayerUnit : Unit
 
         if (health.MyCurrentValue <= 0 && !playerUnitAI.isDead)
         {
-
-
-            //  GameManager.MyInstance.GainXP(50);
-            //    attacker.GetComponent<PlayerUnit>().GainXP(100);
             isDead = true;
-            //  enemayUnitAi.Die();
-            GameManager.MyInstance.playerUnits.Remove(this);
+
+            if (isInSquad && !isSquadLeader)
+            {
+                UnitCommander.MyInstance.LeaveCurrentSquad(this);
+            } else if(isSquadLeader && isInSquad)
+            {
+                squadGroup.RemoveLeader(this);
+
+            }
+
+
+            //if (isSquadLeader)
+            //{
+            //    squadGroup.LeaderDiesRemoveUnitsFromSquad();
+            //}
+            //else if (isInSquad && !isSquadLeader)
+            //{
+            //    UnitCommander.MyInstance.LeaveCurrentSquad(this);
+            //}
+
+            GameManager.MyInstance.playerUnits.Remove(this); // remove from GameManager list
             Destroy(gameObject);
 
-
         }
-
     }
 
 

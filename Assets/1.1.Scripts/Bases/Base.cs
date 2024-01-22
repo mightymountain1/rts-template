@@ -28,7 +28,7 @@ public class Base : MonoBehaviour
     // Start is called before the first frame update
     protected virtual void Start()
     {
-        health.Initialize(initHealth, initHealth);
+        InitilizeHealth();
 
     }
 
@@ -39,12 +39,14 @@ public class Base : MonoBehaviour
         
     }
 
-
-
     public virtual void TakeDamage(float damage)
     {
         health.MyCurrentValue -= damage;
-       
-       
+ 
+    }
+
+    public void InitilizeHealth()
+    {
+        health.Initialize(initHealth, initHealth);
     }
 }

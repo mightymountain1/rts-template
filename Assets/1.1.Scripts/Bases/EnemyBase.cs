@@ -22,7 +22,7 @@ public class EnemyBase : Base
 
         if (health.MyCurrentValue <= 0)
         {
-
+            GameManager.MyInstance.EndGame(true); // win game
         }
     }
 }

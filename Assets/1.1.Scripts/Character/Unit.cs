@@ -4,9 +4,20 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 
+
+public enum UnitType
+{
+   Regular,
+   SquadLeader
+
+}
+
+
 public abstract class Unit : MonoBehaviour
 {
- 
+
+    public UnitType unitType;
+
     [SerializeField]
     protected Stat health;
 
@@ -58,7 +69,11 @@ public abstract class Unit : MonoBehaviour
 
     NavMeshAgent navAgent;
 
-   
+    [Header("Squad Settings")]
+    public bool isInSquad;
+    public bool isSquadLeader;
+    public SquadGroup squadGroup;
+
 
     // int level;
 
@@ -148,7 +163,15 @@ public abstract class Unit : MonoBehaviour
 
 
     //}
+    public void SetUnitType(UnitType setUnitType)
+    {
 
+        unitType = setUnitType;
+
+        //// calling the event
+        //if (settingUnitType != null)
+        //    settingUnitType.Invoke(unitType);
+    }
 
     public virtual void TakeDamage(float damage, Unit attacker, bool isHitACrit)
     {

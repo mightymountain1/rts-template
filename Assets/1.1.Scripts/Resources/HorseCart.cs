@@ -18,6 +18,8 @@ public class HorseCart : MonoBehaviour
 
     PlayerBase playerBase;
     EnemyBase enemyBase;
+
+    BuildingOwnership resourceOwner;
     void Awake()
     {
 
@@ -31,8 +33,8 @@ public class HorseCart : MonoBehaviour
 
         playerBase = GameManager.MyInstance.playerBase;
         enemyBase = GameManager.MyInstance.enemyBase;
-
-        if (resourceHub.ownershipState == BuildingOwnership.Player)
+        resourceOwner = resourceHub.ownershipState;
+        if (resourceOwner == BuildingOwnership.Player)
         {
             navAgent.SetDestination(playerBase.transform.position);
 
@@ -54,15 +56,22 @@ public class HorseCart : MonoBehaviour
     {
         if (other.gameObject.tag == "PlayerBase" && resourceHub.ownershipState == BuildingOwnership.Player)
         {
-            GatherResourcePlayer();
+            ProcessResource();
+            Debug.Log("Player cart");
         }
 
         if (other.gameObject.tag == "EnemyBase" && resourceHub.ownershipState == BuildingOwnership.Enemy)
         {
-            GatherResourceEnemy();
+            ProcessResource();
         }
     }
 
+    
+    public void ProcessResource()
+    {
+        CurrencyManager.MyInstance.ProcessResource(resourceCarryType, quantity, resourceOwner);
+        Destroy(gameObject);
+    }
 
     public void GatherResourcePlayer()
     {

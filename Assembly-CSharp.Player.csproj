@@ -10,7 +10,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{DA1F4E85-F4FC-711B-3DF7-774BADD71156}</ProjectGuid>
+    <ProjectGuid>{D446CC04-1486-5DFB-0206-B300FC7C6E26}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -57,63 +57,48 @@
     <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\1.1.Scripts\Perks\Perk.cs" />
-    <Compile Include="Assets\1.1.Scripts\Managers\BuffManager.cs" />
-    <Compile Include="Assets\1.1.Scripts\CC\PC_MoveWithKeyboard.cs" />
-    <Compile Include="Assets\1.1.Scripts\CC\PC_MoveForward.cs" />
-    <Compile Include="Assets\1.1.Scripts\PowerUps\PowerUpDrop.cs" />
-    <Compile Include="Assets\1.1.Scripts\Managers\FindTarget.cs" />
-    <Compile Include="Assets\1.1.Scripts\Character\PlayerUnit.cs" />
-    <Compile Include="Assets\1.1.Scripts\Perks\PerkButton.cs" />
-    <Compile Include="Assets\1.1.Scripts\Character\Player.cs" />
-    <Compile Include="Assets\1.1.Scripts\Character\Health.cs" />
-    <Compile Include="Assets\1.1.Scripts\CC\PlayerMovement.cs" />
-    <Compile Include="Assets\1.1.Scripts\Selection\SquadLeader.cs" />
-    <Compile Include="Assets\1.1.Scripts\Enemy\Movement.cs" />
-    <Compile Include="Assets\1.1.Scripts\UI\Billboard.cs" />
-    <Compile Include="Assets\1.1.Scripts\Audio\MusicPlayer.cs" />
-    <Compile Include="Assets\1.1.Scripts\Selection\SquadGroup.cs" />
-    <Compile Include="Assets\1.1.Scripts\Audio\Track.cs" />
-    <Compile Include="Assets\1.1.Scripts\Managers\SpawnManager.cs" />
-    <Compile Include="Assets\1.1.Scripts\Enemy\EnemyAI.cs" />
-    <Compile Include="Assets\1.1.Scripts\Perks\PerkWindow.cs" />
-    <Compile Include="Assets\1.1.Scripts\PowerUps\PowerUpScript.cs" />
-    <Compile Include="Assets\1.1.Scripts\Managers\FXManager.cs" />
-    <Compile Include="Assets\1.1.Scripts\Bases\PlayerBase.cs" />
-    <Compile Include="Assets\1.1.Scripts\Audio\AudioManager.cs" />
-    <Compile Include="Assets\1.1.Scripts\Managers\PerkManager.cs" />
-    <Compile Include="Assets\1.1.Scripts\Managers\UIManager.cs" />
-    <Compile Include="Assets\1.1.Scripts\Managers\GameManager.cs" />
-    <Compile Include="Assets\1.1.Scripts\Resources\HorseCart.cs" />
-    <Compile Include="Assets\1.1.Scripts\Resources\ResourceHub.cs" />
-    <Compile Include="Assets\1.1.Scripts\Selection\Mouse3D.cs" />
-    <Compile Include="Assets\1.1.Scripts\Character\Stat.cs" />
-    <Compile Include="Assets\1.1.Scripts\Selection\UnitCommander.cs" />
-    <Compile Include="Assets\1.1.Scripts\Resources\ResourceSource.cs" />
-    <Compile Include="Assets\1.1.Scripts\UI\CameraController.cs" />
-    <Compile Include="Assets\1.1.Scripts\CC\MoveToMouse.cs" />
-    <Compile Include="Assets\1.1.Scripts\Perks\dd.cs" />
-    <Compile Include="Assets\1.1.Scripts\SelfDestructM.cs" />
-    <Compile Include="Assets\1.1.Scripts\Managers\Timer.cs" />
-    <Compile Include="Assets\1.1.Scripts\Enemy\EnemyUnit.cs" />
-    <Compile Include="Assets\1.1.Scripts\Selection\UnitMover.cs" />
-    <Compile Include="Assets\1.1.Scripts\Enemy\EnemyUnitAI.cs" />
-    <Compile Include="Assets\1.1.Scripts\Character\PlayerUnitAI.cs" />
-    <Compile Include="Assets\1.1.Scripts\CC\PC_test.cs" />
-    <Compile Include="Assets\1.1.Scripts\Bases\Base.cs" />
-    <Compile Include="Assets\1.1.Scripts\CC\MyAttempt.cs" />
-    <Compile Include="Assets\1.1.Scripts\Weapons\Weapon.cs" />
-    <Compile Include="Assets\1.1.Scripts\Audio\MixerController.cs" />
-    <Compile Include="Assets\1.1.Scripts\Enemy\Enemy.cs" />
-    <Compile Include="Assets\1.1.Scripts\Bases\EnemyBase.cs" />
-    <Compile Include="Assets\1.1.Scripts\Managers\WeaponManager.cs" />
-    <Compile Include="Assets\1.1.Scripts\Character\Character.cs" />
-    <Compile Include="Assets\1.1.Scripts\CC\Drift.cs" />
-    <Compile Include="Assets\1.1.Scripts\Weapons\Bullet.cs" />
-    <Compile Include="Assets\1.1.Scripts\Managers\CurrencyManager.cs" />
-    <Compile Include="Assets\1.1.Scripts\Selection\UnitSelection.cs" />
-    <Compile Include="Assets\1.1.Scripts\Audio\Sound.cs" />
-    <Compile Include="Assets\1.1.Scripts\Character\Unit.cs" />
+    <Compile Include="Assets\Scripts\Perks\Perk.cs" />
+    <Compile Include="Assets\Scripts\Managers\FindTarget.cs" />
+    <Compile Include="Assets\Scripts\Character\PlayerUnit.cs" />
+    <Compile Include="Assets\Scripts\Perks\PerkButton.cs" />
+    <Compile Include="Assets\Scripts\Selection\SquadLeader.cs" />
+    <Compile Include="Assets\Scripts\UI\Billboard.cs" />
+    <Compile Include="Assets\Scripts\Audio\MusicPlayer.cs" />
+    <Compile Include="Assets\Scripts\Selection\SquadGroup.cs" />
+    <Compile Include="Assets\Scripts\Audio\Track.cs" />
+    <Compile Include="Assets\Scripts\Managers\SpawnManager.cs" />
+    <Compile Include="Assets\Scripts\Enemy\EnemyAI.cs" />
+    <Compile Include="Assets\Scripts\Perks\PerkWindow.cs" />
+    <Compile Include="Assets\Scripts\Bases\PlayerBase.cs" />
+    <Compile Include="Assets\Scripts\Audio\AudioManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\PerkManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\UIManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
+    <Compile Include="Assets\Scripts\Resources\HorseCart.cs" />
+    <Compile Include="Assets\Scripts\Resources\ResourceHub.cs" />
+    <Compile Include="Assets\Scripts\Selection\Mouse3D.cs" />
+    <Compile Include="Assets\Scripts\Character\Stat.cs" />
+    <Compile Include="Assets\Scripts\Selection\UnitCommander.cs" />
+    <Compile Include="Assets\Scripts\Resources\ResourceSource.cs" />
+    <Compile Include="Assets\Scripts\UI\CameraController.cs" />
+    <Compile Include="Assets\Scripts\UI\CameraShake.cs" />
+    <Compile Include="Assets\Scripts\SelfDestruct.cs" />
+    <Compile Include="Assets\Scripts\Managers\Timer.cs" />
+    <Compile Include="Assets\Scripts\Enemy\EnemyUnit.cs" />
+    <Compile Include="Assets\Scripts\Selection\UnitMover.cs" />
+    <Compile Include="Assets\Scripts\Enemy\EnemyUnitAI.cs" />
+    <Compile Include="Assets\Scripts\Character\PlayerUnitAI.cs" />
+    <Compile Include="Assets\Scripts\Bases\Base.cs" />
+    <Compile Include="Assets\Scripts\Weapons\Weapon.cs" />
+    <Compile Include="Assets\Scripts\Audio\MixerController.cs" />
+    <Compile Include="Assets\Scripts\Enemy\Enemy.cs" />
+    <Compile Include="Assets\Scripts\Bases\EnemyBase.cs" />
+    <Compile Include="Assets\Scripts\Character\Character.cs" />
+    <Compile Include="Assets\Scripts\Weapons\Bullet.cs" />
+    <Compile Include="Assets\Scripts\Managers\CurrencyManager.cs" />
+    <Compile Include="Assets\Scripts\Selection\UnitSelection.cs" />
+    <Compile Include="Assets\Scripts\Audio\Sound.cs" />
+    <Compile Include="Assets\Scripts\Character\Unit.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
@@ -714,27 +699,27 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Unity.Timeline.Player.csproj">
-      <Project>{2FDCCFAE-5700-968A-2D67-923DAC8C48D9}</Project>
+      <Project>{9A99D9F7-C580-3CA7-30D6-9287E35DAC1A}</Project>
       <Name>Unity.Timeline.Player</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.TextMeshPro.Player.csproj">
-      <Project>{59D7F676-A513-2E1F-17F4-4FFC98F11171}</Project>
+      <Project>{8EDC5D7A-AD80-FE39-032C-93BEDDC7F6F2}</Project>
       <Name>Unity.TextMeshPro.Player</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.VisualScripting.Flow.Player.csproj">
-      <Project>{5D166024-82CC-F112-9DAB-E31C42A0B6EA}</Project>
+      <Project>{6FF17600-6109-2AB1-18DF-1A88D99629B7}</Project>
       <Name>Unity.VisualScripting.Flow.Player</Name>
     </ProjectReference>
     <ProjectReference Include="UnityEngine.UI.Player.csproj">
-      <Project>{C1BC9ED9-1B6F-0509-3348-C30D1954B1A2}</Project>
+      <Project>{98DC4114-BB77-1A48-C14E-8548645490C4}</Project>
       <Name>UnityEngine.UI.Player</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.VisualScripting.State.Player.csproj">
-      <Project>{F3CAFCD7-6F85-5612-F3A4-794743B6863A}</Project>
+      <Project>{77BB3D3D-6BD2-289F-C0B3-82BCDC0F86DA}</Project>
       <Name>Unity.VisualScripting.State.Player</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.VisualScripting.Core.Player.csproj">
-      <Project>{432CC23A-B8E5-0546-B4A6-0CE95F5D5009}</Project>
+      <Project>{5B26D5E2-3924-AD1C-05E8-68C8994D1C2B}</Project>
       <Name>Unity.VisualScripting.Core.Player</Name>
     </ProjectReference>
   </ItemGroup>
